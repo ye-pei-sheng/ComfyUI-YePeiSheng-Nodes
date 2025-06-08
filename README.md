@@ -34,5 +34,3 @@ Note: save_image_with_seed.py can only output the Seed value of the first sample
 =================
 
 
-
-[Uploading ComfyUI_YePeiSheng_Nodes.json…]()
