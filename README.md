@@ -1,3 +1,7 @@
+
+
+![image](https://github.com/user-attachments/assets/2c170d9e-0ba1-4310-832c-ed398a72512f)
+
 Two custom ComfyUI nodes developed using DeepSeek Auto-Create:
 
 A KSampler node that outputs the currently used Seed value (seed_output_sampler.py)
