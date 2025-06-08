@@ -28,3 +28,11 @@ Note: save_image_with_seed.py can only output the Seed value of the first sample
 
 ﻿
 注：save_image_with_seed.py 只能输出首采样图像的Seed值，这个Seed值也是整个工作流的默认Seed值。
+
+
+
+=================
+
+
+
+[Uploading ComfyUI_YePeiSheng_Nodes.json…]()
