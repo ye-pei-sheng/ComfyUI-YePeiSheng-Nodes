@@ -86,17 +86,24 @@ class SaveImageWithSeed:
         if prompt_data:
             for node_id, node_data in prompt_data.items():
                 try:
-                    # 检查 inputs 中的 seed/noise_seed
-                    inputs = node_data.get("inputs", {})
-                    for key in ["seed", "noise_seed"]:
-                        if key in inputs:
-                            seed_candidates.append(str(inputs[key]))
-                    
                     # 检查 class_type 是否包含 sampler
                     if "sampler" in node_data.get("class_type", "").lower():
-                        properties = node_data.get("properties", {})
-                        if "Seed" in properties:
-                            seed_candidates.append(str(properties["Seed"]))
+                        inputs = node_data.get("inputs", {})
+                        
+                        # 检查 denoise 参数是否为 1.0
+                        denoise = inputs.get("denoise")
+                        if denoise is not None:
+                            # 处理可能的浮点数精度问题
+                            try:
+                                denoise_float = float(denoise)
+                                if abs(denoise_float - 1.0) < 0.001:
+                                    # 提取 seed 值
+                                    for key in ["seed", "noise_seed"]:
+                                        if key in inputs:
+                                            seed_candidates.append(str(inputs[key]))
+                            except (TypeError, ValueError):
+                                # 如果转换失败，忽略该节点
+                                pass
                 except:
                     continue
         
@@ -105,21 +112,25 @@ class SaveImageWithSeed:
             workflow = extra_pnginfo["workflow"]
             for node in workflow.get("nodes", []):
                 try:
-                    # 检查 properties 中的 seed
-                    properties = node.get("properties", {})
-                    if "Seed" in properties:
-                        seed_candidates.append(str(properties["Seed"]))
-                    elif "seed" in properties:
-                        seed_candidates.append(str(properties["seed"]))
-                    
-                    # 检查 widgets_values 中的 seed
-                    widgets = node.get("widgets_values", [])
-                    if widgets and isinstance(widgets, list):
-                        # 假设seed是widgets列表中的第一个数字
-                        for val in widgets:
-                            if isinstance(val, (int, float)):
-                                seed_candidates.append(str(int(val)))
-                                break
+                    # 检查节点类型是否包含 sampler
+                    if "sampler" in node.get("type", "").lower():
+                        properties = node.get("properties", {})
+                        
+                        # 检查 denoise 参数是否为 1.0
+                        denoise = properties.get("Denoise") or properties.get("denoise")
+                        if denoise is not None:
+                            # 处理可能的浮点数精度问题
+                            try:
+                                denoise_float = float(denoise)
+                                if abs(denoise_float - 1.0) < 0.001:
+                                    # 提取 seed 值
+                                    if "Seed" in properties:
+                                        seed_candidates.append(str(properties["Seed"]))
+                                    elif "seed" in properties:
+                                        seed_candidates.append(str(properties["seed"]))
+                            except (TypeError, ValueError):
+                                # 如果转换失败，忽略该节点
+                                pass
                 except:
                     continue
         
